@@ -2,16 +2,16 @@
   "business": {
     "name": "Gift Card Generator",
     "default_font": "Arial",
-    "default_font_size": 12
+    "default_font_size": 18
   },
   "barcode": {
     "format": "Code128",
     "default_size": "Medium",
     "sizes": {
-      "Small": [120, 30],
-      "Medium": [160, 40],
-      "Large": [200, 50],
-      "XL": [240, 60]
+      "Small": [200, 50],
+      "Medium": [280, 70],
+      "Large": [360, 90],
+      "XL": [440, 110]
     }
   },
   "ui": {

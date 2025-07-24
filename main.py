@@ -771,12 +771,12 @@ class GiftCardGenerator(ctk.CTk):
     def get_actual_barcode_size(self):
         """Get actual barcode size based on selection"""
         size_mapping = {
-            "Small": {"width": 120, "height": 30},
-            "Medium": {"width": 160, "height": 40},
-            "Large": {"width": 200, "height": 50},
-            "XL": {"width": 240, "height": 60}
+            "Small": {"width": 200, "height": 50},
+            "Medium": {"width": 280, "height": 70},
+            "Large": {"width": 360, "height": 90},
+            "XL": {"width": 440, "height": 110}
         }
-        return size_mapping.get(self.barcode_size_var.get(), {"width": 160, "height": 40})
+        return size_mapping.get(self.barcode_size_var.get(), {"width": 280, "height": 70})
     
     def generate_barcode(self, barcode_data):
         """Generate POS scanner-compatible Code128 barcode with optimal settings"""
@@ -886,13 +886,18 @@ class GiftCardGenerator(ctk.CTk):
             
             # Try to load font
             try:
-                font_size = int(12 * (self.text_scale.get() / 100))
+                font_size = int(18 * (self.text_scale.get() / 100))  # Increased base font size from 12 to 18
                 font = ImageFont.truetype("arial.ttf", font_size)
             except:
                 try:
-                    font = ImageFont.load_default()
+                    # Try other common font names
+                    font_size = int(18 * (self.text_scale.get() / 100))
+                    font = ImageFont.truetype("Arial.ttf", font_size)
                 except:
-                    font = None
+                    try:
+                        font = ImageFont.load_default()
+                    except:
+                        font = None
             
             if not font:
                 return
