@@ -679,6 +679,28 @@ class GiftCardGenerator(ctk.CTk):
     def refresh_preview_canvas(self):
         """Refresh the preview canvas with current settings"""
         if not self.background_path:
+            # Just show empty canvas with background color
+            self.preview_canvas.delete("all")
+            return
+        
+        # Check if barcode column is configured
+        barcode_col = safe_get_input(self.barcode_col, "")
+        if not barcode_col:
+            # Show background only without barcode
+            try:
+                # Load and resize background image
+                background = Image.open(self.background_path)
+                background = background.resize((self.canvas_width, self.canvas_height), Image.Resampling.LANCZOS)
+                self.preview_bg_photo = ImageTk.PhotoImage(background)
+                
+                # Update canvas
+                self.preview_canvas.delete("all")
+                self.preview_canvas.create_image(
+                    self.canvas_width//2, self.canvas_height//2,
+                    image=self.preview_bg_photo
+                )
+            except Exception as e:
+                self.log(f"❌ Background preview error: {str(e)}")
             return
         
         try:

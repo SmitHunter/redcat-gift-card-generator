@@ -17,9 +17,10 @@ A powerful, configurable GUI application for generating professional gift cards 
 
 1. **Select Background**: Choose your gift card background image (PNG, JPG, etc.)
 2. **Import Data**: Load CSV or Excel file with gift card information
-3. **Configure Layout**: Position barcodes and text using visual controls
-4. **Preview Design**: See live preview of your gift card design
-5. **Batch Generate**: Create all gift cards with one click
+3. **Configure Columns**: Map your data columns to required fields
+4. **Configure Layout**: Position barcodes and text using visual controls
+5. **Live Preview**: Real-time preview updates as you adjust settings
+6. **Batch Generate**: Create all gift cards with one click
 
 ## Installation
 
