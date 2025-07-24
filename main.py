@@ -200,25 +200,42 @@ class GiftCardGenerator(ctk.CTk):
         # Configure grid weights
         col_grid.columnconfigure(1, weight=1)
         
-        # Barcode column
-        ctk.CTkLabel(col_grid, text="Barcode Column:", width=120, anchor="w").grid(row=0, column=0, padx=(0, 10), pady=2, sticky="w")
+        # Barcode column (required)
+        ctk.CTkLabel(col_grid, text="Barcode Column (Required):", width=120, anchor="w").grid(row=0, column=0, padx=(0, 10), pady=2, sticky="w")
         self.barcode_col = ctk.CTkEntry(col_grid, placeholder_text="e.g., barcode")
         self.barcode_col.grid(row=0, column=1, padx=(0, 20), pady=2, sticky="ew")
         
-        # Member number column
-        ctk.CTkLabel(col_grid, text="Member Number:", width=120, anchor="w").grid(row=1, column=0, padx=(0, 10), pady=2, sticky="w")
-        self.member_col = ctk.CTkEntry(col_grid, placeholder_text="e.g., member_number")
+        # Member number column (optional)
+        ctk.CTkLabel(col_grid, text="Member Number (Optional):", width=120, anchor="w").grid(row=1, column=0, padx=(0, 10), pady=2, sticky="w")
+        self.member_col = ctk.CTkEntry(col_grid, placeholder_text="e.g., member_number (leave empty if not needed)")
         self.member_col.grid(row=1, column=1, padx=(0, 20), pady=2, sticky="ew")
         
-        # Verification code column
-        ctk.CTkLabel(col_grid, text="Verification Code:", width=120, anchor="w").grid(row=2, column=0, padx=(0, 10), pady=2, sticky="w")
-        self.verification_col = ctk.CTkEntry(col_grid, placeholder_text="e.g., verification_code")
+        # Verification code column (optional)
+        ctk.CTkLabel(col_grid, text="Verification Code (Optional):", width=120, anchor="w").grid(row=2, column=0, padx=(0, 10), pady=2, sticky="w")
+        self.verification_col = ctk.CTkEntry(col_grid, placeholder_text="e.g., verification_code (leave empty if not needed)")
         self.verification_col.grid(row=2, column=1, padx=(0, 20), pady=2, sticky="ew")
         
-        # Card serial column
-        ctk.CTkLabel(col_grid, text="Card Serial:", width=120, anchor="w").grid(row=3, column=0, padx=(0, 10), pady=2, sticky="w")
-        self.serial_col = ctk.CTkEntry(col_grid, placeholder_text="e.g., card_serial")
+        # Card serial column (optional)
+        ctk.CTkLabel(col_grid, text="Card Serial (Optional):", width=120, anchor="w").grid(row=3, column=0, padx=(0, 10), pady=2, sticky="w")
+        self.serial_col = ctk.CTkEntry(col_grid, placeholder_text="e.g., card_serial (leave empty if not needed)")
         self.serial_col.grid(row=3, column=1, padx=(0, 20), pady=2, sticky="ew")
+        
+        # Text generation toggle
+        text_toggle_frame = ctk.CTkFrame(config_frame, fg_color="transparent")
+        text_toggle_frame.pack(pady=(8, 8), padx=20, fill="x")
+        
+        self.enable_text_var = tk.BooleanVar(value=True)
+        self.text_checkbox = ctk.CTkCheckBox(text_toggle_frame, text="Include text information on cards", 
+                                           variable=self.enable_text_var, command=self.toggle_text_sections)
+        self.text_checkbox.pack(anchor="w")
+    
+    def toggle_text_sections(self):
+        """Toggle visibility of text configuration section"""
+        if self.enable_text_var.get():
+            self.text_frame.pack(pady=(5, 5), padx=10, fill="x")
+        else:
+            self.text_frame.pack_forget()
+        self.update_preview()
     
     def setup_barcode_configuration(self):
         """Setup barcode configuration section"""
@@ -263,14 +280,14 @@ class GiftCardGenerator(ctk.CTk):
     
     def setup_text_configuration(self):
         """Setup text configuration section"""
-        text_frame = ctk.CTkFrame(self.scrollable_frame, fg_color="#2B2B2B", corner_radius=12)
-        text_frame.pack(pady=(5, 5), padx=10, fill="x")
+        self.text_frame = ctk.CTkFrame(self.scrollable_frame, fg_color="#2B2B2B", corner_radius=12)
+        self.text_frame.pack(pady=(5, 5), padx=10, fill="x")
         
-        ctk.CTkLabel(text_frame, text="📝 Text Configuration", 
+        ctk.CTkLabel(self.text_frame, text="📝 Text Configuration", 
                     font=("Segoe UI", 14, "bold")).pack(pady=(8, 5), padx=20, fill="x")
         
         # Text position
-        text_pos_frame = ctk.CTkFrame(text_frame, fg_color="transparent")
+        text_pos_frame = ctk.CTkFrame(self.text_frame, fg_color="transparent")
         text_pos_frame.pack(pady=(3, 3), padx=20, fill="x")
         
         ctk.CTkLabel(text_pos_frame, text="Position:", width=80, anchor="w").pack(side="left")
@@ -286,7 +303,7 @@ class GiftCardGenerator(ctk.CTk):
         bg_menu.pack(side="left", padx=(10, 0))
         
         # Custom text position controls
-        self.custom_text_frame = ctk.CTkFrame(text_frame, fg_color="transparent")
+        self.custom_text_frame = ctk.CTkFrame(self.text_frame, fg_color="transparent")
         self.custom_text_frame.pack(pady=(3, 3), padx=20, fill="x")
         
         ctk.CTkLabel(self.custom_text_frame, text="X Position:", width=80, anchor="w").pack(side="left")
@@ -303,7 +320,7 @@ class GiftCardGenerator(ctk.CTk):
         self.custom_text_frame.pack_forget()
         
         # Text alignment and scale
-        align_frame = ctk.CTkFrame(text_frame, fg_color="transparent")
+        align_frame = ctk.CTkFrame(self.text_frame, fg_color="transparent")
         align_frame.pack(pady=(3, 8), padx=20, fill="x")
         
         ctk.CTkLabel(align_frame, text="Alignment:", width=80, anchor="w").pack(side="left")
@@ -488,9 +505,9 @@ class GiftCardGenerator(ctk.CTk):
             # Create sample data for preview
             sample_data = {
                 "barcode": "1234567890123",
-                "member_number": "12345",
-                "verification_code": "ABCD1234",
-                "card_serial": "GC001"
+                "member_number": "12345" if safe_get_input(self.member_col) else "",
+                "verification_code": "ABCD1234" if safe_get_input(self.verification_col) else "",
+                "card_serial": "GC001" if safe_get_input(self.serial_col) else ""
             }
             
             self.log("🔄 Generating preview...")
@@ -591,8 +608,9 @@ class GiftCardGenerator(ctk.CTk):
             # Paste barcode onto background
             background.paste(barcode_image, (barcode_x, barcode_y), barcode_image)
             
-            # Add text information
-            self.draw_text_block(background, member_number, verification_code, card_serial)
+            # Add text information only if enabled
+            if self.enable_text_var.get():
+                self.draw_text_block(background, member_number, verification_code, card_serial)
             
             return background.convert("RGB")
             
@@ -605,12 +623,18 @@ class GiftCardGenerator(ctk.CTk):
         try:
             draw = ImageDraw.Draw(image)
             
-            # Prepare text
-            text_lines = [
-                f"Member: {member_number}",
-                f"Code: {verification_code}",
-                f"Serial: {card_serial}"
-            ]
+            # Prepare text lines - only include non-empty fields
+            text_lines = []
+            if member_number:
+                text_lines.append(f"Member: {member_number}")
+            if verification_code:
+                text_lines.append(f"Code: {verification_code}")
+            if card_serial:
+                text_lines.append(f"Serial: {card_serial}")
+            
+            # If no text to display, skip text drawing
+            if not text_lines:
+                return
             
             # Calculate text position
             img_width, img_height = image.size
@@ -714,20 +738,24 @@ class GiftCardGenerator(ctk.CTk):
             
             # Get column names
             barcode_col = safe_get_input(self.barcode_col, "barcode")
-            member_col = safe_get_input(self.member_col, "member_number")
-            verification_col = safe_get_input(self.verification_col, "verification_code")
-            serial_col = safe_get_input(self.serial_col, "card_serial")
+            member_col = safe_get_input(self.member_col, "")
+            verification_col = safe_get_input(self.verification_col, "")
+            serial_col = safe_get_input(self.serial_col, "")
             
-            # Validate columns exist
-            missing_cols = []
-            for col_name, col_entry in [(barcode_col, "Barcode"), (member_col, "Member Number"), 
-                                       (verification_col, "Verification Code"), (serial_col, "Card Serial")]:
-                if col_name not in df.columns:
-                    missing_cols.append(f"{col_entry} ({col_name})")
-            
-            if missing_cols:
-                self.log(f"❌ Missing columns: {', '.join(missing_cols)}")
+            # Validate required columns exist (only barcode is required)
+            if barcode_col not in df.columns:
+                self.log(f"❌ Required barcode column '{barcode_col}' not found in data file")
                 return
+            
+            # Validate optional columns exist if specified
+            missing_optional_cols = []
+            for col_name, col_label in [(member_col, "Member Number"), (verification_col, "Verification Code"), (serial_col, "Card Serial")]:
+                if col_name and col_name not in df.columns:
+                    missing_optional_cols.append(f"{col_label} ({col_name})")
+            
+            if missing_optional_cols:
+                self.log(f"⚠️ Warning: Optional columns not found: {', '.join(missing_optional_cols)}")
+                self.log("🔄 Continuing with barcode-only generation...")
             
             self.log(f"🔄 Generating {len(df)} gift cards...")
             
@@ -735,11 +763,11 @@ class GiftCardGenerator(ctk.CTk):
             success_count = 0
             for index, row in df.iterrows():
                 try:
-                    # Extract data
+                    # Extract data - barcode is required, others are optional
                     barcode_data = row[barcode_col]
-                    member_number = row[member_col]
-                    verification_code = row[verification_col]
-                    card_serial = row[serial_col]
+                    member_number = row[member_col] if member_col and member_col in df.columns else ""
+                    verification_code = row[verification_col] if verification_col and verification_col in df.columns else ""
+                    card_serial = row[serial_col] if serial_col and serial_col in df.columns else f"Card_{index+1:04d}"
                     
                     # Generate gift card
                     card_image = self.create_gift_card_image(

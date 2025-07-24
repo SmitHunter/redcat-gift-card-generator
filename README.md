@@ -7,6 +7,8 @@ A powerful, configurable GUI application for generating professional gift cards 
 - **Batch Processing**: Generate hundreds of gift cards from CSV/Excel data files
 - **Live Preview**: Real-time preview of gift card design with drag-and-drop positioning
 - **Flexible Barcode Generation**: Code128 barcodes with multiple size options
+- **Barcode-Only Mode**: Generate simple barcode-only cards for in-store use
+- **Optional Text Fields**: Member numbers, verification codes, and serials are optional
 - **Custom Text Layouts**: Configurable text positioning with background options
 - **Professional Output**: High-quality PNG images optimized for printing
 - **User-Friendly Interface**: Modern dark theme with intuitive controls
@@ -94,19 +96,29 @@ Customize the application by editing `config.json`:
 
 Your CSV or Excel file should contain these columns (names can be customized in the app):
 
-| Column | Description | Example |
-|--------|-------------|---------|
-| barcode | Barcode data | 1234567890123 |
-| member_number | Member/Customer ID | 12345 |
-| verification_code | Security code | ABCD1234 |
-| card_serial | Unique card identifier | GC001 |
+| Column | Description | Required | Example |
+|--------|-------------|----------|---------|
+| barcode | Barcode data | ✅ Yes | 1234567890123 |
+| member_number | Member/Customer ID | ❌ Optional | 12345 |
+| verification_code | Security code | ❌ Optional | ABCD1234 |
+| card_serial | Unique card identifier | ❌ Optional | GC001 |
 
-### Example CSV:
+**Note**: Only the barcode column is required. All other fields are optional and can be omitted for simple barcode-only cards.
+
+### Example CSV (Full):
 ```csv
 barcode,member_number,verification_code,card_serial
 1234567890123,12345,ABCD1234,GC001
 1234567890124,12346,EFGH5678,GC002
 1234567890125,12347,IJKL9012,GC003
+```
+
+### Example CSV (Barcode-Only):
+```csv
+barcode
+1234567890123
+1234567890124
+1234567890125
 ```
 
 ## Usage Guide
@@ -116,11 +128,12 @@ barcode,member_number,verification_code,card_serial
 - **Data File**: Choose CSV or Excel file with gift card data
 
 ### 2. Column Configuration
-Map your data file columns to the required fields:
-- **Barcode Column**: Column containing barcode data
-- **Member Number**: Customer/member identification
-- **Verification Code**: Security or validation code
-- **Card Serial**: Unique card identifier
+Map your data file columns to the fields:
+- **Barcode Column (Required)**: Column containing barcode data
+- **Member Number (Optional)**: Customer/member identification - leave empty if not needed
+- **Verification Code (Optional)**: Security or validation code - leave empty if not needed
+- **Card Serial (Optional)**: Unique card identifier - leave empty if not needed
+- **Include Text Information**: Toggle to show/hide text on cards (uncheck for barcode-only cards)
 
 ### 3. Barcode Configuration
 - **Position**: Choose from presets or use custom positioning
