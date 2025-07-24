@@ -1,0 +1,40 @@
+{
+  "business": {
+    "name": "Gift Card Generator",
+    "default_font": "Arial",
+    "default_font_size": 12
+  },
+  "barcode": {
+    "format": "Code128",
+    "default_size": "Medium",
+    "sizes": {
+      "Small": [120, 30],
+      "Medium": [160, 40],
+      "Large": [200, 50],
+      "XL": [240, 60]
+    }
+  },
+  "ui": {
+    "window_width": 1200,
+    "window_height": 800,
+    "canvas_width": 400,
+    "canvas_height": 250,
+    "theme": "dark",
+    "colors": {
+      "primary": "#121212",
+      "secondary": "#1E1E1E",
+      "accent": "#2B2B2B",
+      "text": "#FFFFFF",
+      "success": "#00FF00",
+      "error": "#FF4444"
+    }
+  },
+  "defaults": {
+    "barcode_position": "Bottom-Right",
+    "text_position": "Bottom-Left",
+    "text_background": "White Box",
+    "text_alignment": "Left",
+    "text_scale": 100.0,
+    "text_transparency": 50.0
+  }
+}
