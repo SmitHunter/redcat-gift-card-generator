@@ -193,9 +193,9 @@ class GiftCardGenerator(ctk.CTk):
         self.barcode_col = ctk.CTkEntry(col_grid, placeholder_text="e.g., barcode")
         self.barcode_col.grid(row=0, column=1, padx=(0, 20), pady=2, sticky="ew")
         
-        # Member number column
-        ctk.CTkLabel(col_grid, text="Member Number:", width=120, anchor="w").grid(row=1, column=0, padx=(0, 10), pady=2, sticky="w")
-        self.member_col = ctk.CTkEntry(col_grid, placeholder_text="e.g., member_number")
+        # Card number column
+        ctk.CTkLabel(col_grid, text="Card Number:", width=120, anchor="w").grid(row=1, column=0, padx=(0, 10), pady=2, sticky="w")
+        self.member_col = ctk.CTkEntry(col_grid, placeholder_text="e.g., card_number")
         self.member_col.grid(row=1, column=1, padx=(0, 20), pady=2, sticky="ew")
         
         # Verification code column
@@ -573,10 +573,10 @@ class GiftCardGenerator(ctk.CTk):
             self.barcode_custom_frame.pack_forget()
             # Set preset positions
             positions = {
-                "Top-Left": ("10", "10"),
-                "Top-Right": ("90", "10"),
-                "Bottom-Left": ("10", "90"),
-                "Bottom-Right": ("90", "90"),
+                "Top-Left": ("2", "2"),
+                "Top-Right": ("98", "2"),
+                "Bottom-Left": ("2", "98"),
+                "Bottom-Right": ("98", "98"),
                 "Center": ("50", "50")
             }
             pos = self.barcode_position_var.get()
@@ -594,10 +594,10 @@ class GiftCardGenerator(ctk.CTk):
             self.text_custom_frame.pack_forget()
             # Set preset positions
             positions = {
-                "Top-Left": ("10", "10"),
-                "Top-Right": ("90", "10"),
-                "Bottom-Left": ("10", "90"),
-                "Bottom-Right": ("90", "90"),
+                "Top-Left": ("2", "2"),
+                "Top-Right": ("98", "2"),
+                "Bottom-Left": ("2", "98"),
+                "Bottom-Right": ("98", "98"),
                 "Center": ("50", "50")
             }
             pos = self.text_position_var.get()
@@ -716,7 +716,8 @@ class GiftCardGenerator(ctk.CTk):
                 self.background_path,
                 sample_data["barcode"],
                 sample_data["member_number"],
-                sample_data["verification_code"]
+                sample_data["verification_code"],
+                1  # Sample card number
             )
             
             if preview_image:
@@ -771,12 +772,12 @@ class GiftCardGenerator(ctk.CTk):
     def get_actual_barcode_size(self):
         """Get actual barcode size based on selection"""
         size_mapping = {
-            "Small": {"width": 200, "height": 50},
-            "Medium": {"width": 280, "height": 70},
-            "Large": {"width": 360, "height": 90},
-            "XL": {"width": 440, "height": 110}
+            "Small": {"width": 300, "height": 80},
+            "Medium": {"width": 400, "height": 100},
+            "Large": {"width": 500, "height": 120},
+            "XL": {"width": 600, "height": 140}
         }
-        return size_mapping.get(self.barcode_size_var.get(), {"width": 280, "height": 70})
+        return size_mapping.get(self.barcode_size_var.get(), {"width": 400, "height": 100})
     
     def generate_barcode(self, barcode_data):
         """Generate POS scanner-compatible Code128 barcode with optimal settings"""
@@ -830,7 +831,7 @@ class GiftCardGenerator(ctk.CTk):
             self.log(f"❌ Barcode generation error: {str(e)}")
             return None
     
-    def create_gift_card_image(self, background_path, barcode_data, member_number, verification_code):
+    def create_gift_card_image(self, background_path, barcode_data, member_number, verification_code, card_number=1):
         """Create a single gift card image"""
         try:
             # Open background image
@@ -860,7 +861,7 @@ class GiftCardGenerator(ctk.CTk):
             background.paste(barcode_image, (barcode_x, barcode_y), barcode_image)
             
             # Add text information
-            self.draw_text_block_full(background, member_number, verification_code)
+            self.draw_text_block_full(background, member_number, verification_code, card_number)
             
             return background.convert("RGB")
             
@@ -868,14 +869,15 @@ class GiftCardGenerator(ctk.CTk):
             self.log(f"❌ Gift card creation error: {str(e)}")
             return None
     
-    def draw_text_block_full(self, image, member_number, verification_code):
+    def draw_text_block_full(self, image, member_number, verification_code, card_number=1):
         """Draw text block on the image with full functionality"""
         try:
             draw = ImageDraw.Draw(image)
             
             # Prepare text
             text_lines = [
-                f"Member: {member_number}",
+                f"Card: {card_number}",
+                f"Card Number: {member_number}",
                 f"PIN: {verification_code}"
             ]
             
@@ -1004,7 +1006,7 @@ class GiftCardGenerator(ctk.CTk):
             
             # Validate columns exist
             missing_cols = []
-            for col_name, col_entry in [(barcode_col, "Barcode"), (member_col, "Member Number"), (verification_col, "Verification Code")]:
+            for col_name, col_entry in [(barcode_col, "Barcode"), (member_col, "Card Number"), (verification_col, "Verification Code")]:
                 if col_name not in df.columns:
                     missing_cols.append(f"{col_entry} ({col_name})")
             
@@ -1029,7 +1031,8 @@ class GiftCardGenerator(ctk.CTk):
                         self.background_path,
                         barcode_data,
                         member_number,
-                        verification_code
+                        verification_code,
+                        index + 1  # Sequential card number
                     )
                     
                     if card_image:

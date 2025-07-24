@@ -8,10 +8,10 @@
     "format": "Code128",
     "default_size": "Medium",
     "sizes": {
-      "Small": [200, 50],
-      "Medium": [280, 70],
-      "Large": [360, 90],
-      "XL": [440, 110]
+      "Small": [300, 80],
+      "Medium": [400, 100],
+      "Large": [500, 120],
+      "XL": [600, 140]
     }
   },
   "ui": {
@@ -31,10 +31,14 @@
   },
   "defaults": {
     "barcode_position": "Bottom-Right",
-    "text_position": "Bottom-Left",
+    "text_position": "Bottom-Left", 
     "text_background": "White Box",
     "text_alignment": "Left",
     "text_scale": 100.0,
-    "text_transparency": 50.0
+    "text_transparency": 50.0,
+    "barcode_x": 98,
+    "barcode_y": 98,
+    "text_x": 2,
+    "text_y": 98
   }
 }
