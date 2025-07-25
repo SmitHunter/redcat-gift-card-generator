@@ -101,8 +101,8 @@ class GiftCardGenerator(ctk.CTk):
         self.barcode_size_var = tk.StringVar(value="Medium")
         
         self.text_position_var = tk.StringVar(value="Bottom-Left")
-        self.text_x = tk.StringVar(value="15")
-        self.text_y = tk.StringVar(value="85")
+        self.text_x = tk.StringVar(value="10")
+        self.text_y = tk.StringVar(value="90")
         self.text_background_var = tk.StringVar(value="White Box")
         self.text_transparency = tk.DoubleVar(value=50.0)
         self.text_alignment_var = tk.StringVar(value="Left")
@@ -592,12 +592,13 @@ class GiftCardGenerator(ctk.CTk):
             self.text_custom_frame.pack(fill="x", padx=10, pady=2)
         else:
             self.text_custom_frame.pack_forget()
-            # Set preset positions
+            # Set preset positions (these values are now only used for custom positioning)
+            # The actual corner positioning is handled by the draw_text_block_full method
             positions = {
-                "Top-Left": ("2", "2"),
-                "Top-Right": ("98", "2"),
-                "Bottom-Left": ("2", "98"),
-                "Bottom-Right": ("98", "98"),
+                "Top-Left": ("10", "10"),
+                "Top-Right": ("90", "10"),
+                "Bottom-Left": ("10", "90"),
+                "Bottom-Right": ("90", "90"),
                 "Center": ("50", "50")
             }
             pos = self.text_position_var.get()
@@ -663,8 +664,8 @@ class GiftCardGenerator(ctk.CTk):
         self.barcode_size_var.set("Medium")
         
         self.text_position_var.set("Bottom-Left")
-        self.text_x.set("15")
-        self.text_y.set("85")
+        self.text_x.set("10")
+        self.text_y.set("90")
         self.text_background_var.set("White Box")
         self.text_transparency.set(50.0)
         self.text_alignment_var.set("Left")
@@ -915,22 +916,63 @@ class GiftCardGenerator(ctk.CTk):
             max_text_width = max(text_widths)
             total_text_height = sum(text_heights) + (len(text_lines) - 1) * 5  # 5px spacing
             
-            # Calculate position
-            text_x = int((text_x_percent / 100) * img_width)
-            text_y = int((text_y_percent / 100) * img_height)
+            # Background padding
+            padding = 10
+            text_block_width = max_text_width + (2 * padding)
+            text_block_height = total_text_height + (2 * padding)
             
-            # Adjust for alignment
-            if self.text_alignment_var.get() == "Center":
-                text_x -= max_text_width // 2
-            elif self.text_alignment_var.get() == "Right":
-                text_x -= max_text_width
+            # Calculate position with proper boundary handling for corner positions
+            text_position = self.text_position_var.get()
+            
+            if text_position == "Custom":
+                # For custom positions, use percentage-based positioning with boundary checks
+                text_x = int((text_x_percent / 100) * img_width)
+                text_y = int((text_y_percent / 100) * img_height)
                 
-            text_y -= total_text_height // 2
+                # Adjust for alignment
+                if self.text_alignment_var.get() == "Center":
+                    text_x -= max_text_width // 2
+                elif self.text_alignment_var.get() == "Right":
+                    text_x -= max_text_width
+                    
+                text_y -= total_text_height // 2
+                
+                # Ensure text block stays within image bounds
+                text_x = max(padding, min(text_x, img_width - text_block_width))
+                text_y = max(padding, min(text_y, img_height - text_block_height))
+                
+            else:
+                # For preset positions, calculate proper corner positioning
+                margin = 15  # Margin from edges for corner positions
+                
+                if text_position == "Top-Left":
+                    text_x = margin
+                    text_y = margin
+                elif text_position == "Top-Right":
+                    text_x = img_width - text_block_width - margin
+                    text_y = margin
+                elif text_position == "Bottom-Left":
+                    text_x = margin
+                    text_y = img_height - text_block_height - margin
+                elif text_position == "Bottom-Right":
+                    text_x = img_width - text_block_width - margin
+                    text_y = img_height - text_block_height - margin
+                elif text_position == "Center":
+                    text_x = (img_width - text_block_width) // 2
+                    text_y = (img_height - text_block_height) // 2
+                else:
+                    # Fallback to bottom-left if position is unrecognized
+                    text_x = margin
+                    text_y = img_height - text_block_height - margin
+                
+                # Add padding offset for text placement within the background box
+                text_x += padding
+                text_y += padding
             
             # Draw background if specified
             background_type = self.text_background_var.get()
             if background_type != "None":
-                padding = 10
+                # Calculate background coordinates based on the corrected text position
                 bg_x1 = text_x - padding
                 bg_y1 = text_y - padding
                 bg_x2 = text_x + max_text_width + padding
