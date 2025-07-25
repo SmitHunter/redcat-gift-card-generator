@@ -104,7 +104,6 @@ class GiftCardGenerator(ctk.CTk):
         self.text_x = tk.StringVar(value="10")
         self.text_y = tk.StringVar(value="90")
         self.text_background_var = tk.StringVar(value="White Box")
-        self.text_transparency = tk.DoubleVar(value=50.0)
         self.text_alignment_var = tk.StringVar(value="Left")
         self.text_scale = tk.DoubleVar(value=100.0)
         
@@ -354,34 +353,12 @@ class GiftCardGenerator(ctk.CTk):
         bg_combo = ctk.CTkComboBox(
             bg_frame,
             variable=self.text_background_var,
-            values=["None", "White Box", "Semi-transparent", "Custom Color"],
+            values=["None", "White Box", "Custom Color"],
             command=self.on_background_change,
             width=120
         )
         bg_combo.pack(side="left", padx=(5, 0))
         
-        # Transparency control (for semi-transparent backgrounds)
-        self.transparency_frame = ctk.CTkFrame(text_frame, fg_color="transparent")
-        
-        transparency_frame = ctk.CTkFrame(self.transparency_frame, fg_color="transparent")
-        transparency_frame.pack(fill="x", pady=2)
-        
-        ctk.CTkLabel(transparency_frame, text="Transparency (%):", width=120, anchor="w").pack(side="left")
-        
-        # Transparency entry field
-        transparency_entry = ctk.CTkEntry(transparency_frame, textvariable=self.text_transparency, width=50)
-        transparency_entry.pack(side="left", padx=(5, 5))
-        transparency_entry.bind("<KeyRelease>", self.on_transparency_change)
-        
-        # Transparency slider
-        transparency_slider = ctk.CTkSlider(
-            transparency_frame,
-            from_=0, to=100,
-            variable=self.text_transparency,
-            command=self.on_transparency_change,
-            width=100
-        )
-        transparency_slider.pack(side="left", padx=(5, 0))
         
         # Custom color selection (initially hidden)
         self.custom_color_frame = ctk.CTkFrame(text_frame, fg_color="transparent")
@@ -507,13 +484,12 @@ class GiftCardGenerator(ctk.CTk):
         self.barcode_y.trace_add('write', self.update_live_preview)
         self.text_position_var.trace_add('write', self.update_live_preview)
         self.text_background_var.trace_add('write', self.update_live_preview)
-        self.text_transparency.trace_add('write', self.update_live_preview)
         self.text_alignment_var.trace_add('write', self.update_live_preview)
         self.text_scale.trace_add('write', self.update_live_preview)
         self.text_x.trace_add('write', self.update_live_preview)
         self.text_y.trace_add('write', self.update_live_preview)
         
-        # Initialize transparency control visibility
+        # Initialize position controls
         self.on_position_change()
     
     def log(self, msg):
@@ -610,11 +586,6 @@ class GiftCardGenerator(ctk.CTk):
     
     def on_background_change(self, value=None):
         """Handle background change"""
-        if self.text_background_var.get() == "Semi-transparent":
-            self.transparency_frame.pack(fill="x", padx=10, pady=2)
-        else:
-            self.transparency_frame.pack_forget()
-            
         if self.text_background_var.get() == "Custom Color":
             self.custom_color_frame.pack(fill="x", padx=10, pady=2)
         else:
@@ -622,9 +593,6 @@ class GiftCardGenerator(ctk.CTk):
         
         self.update_live_preview()
     
-    def on_transparency_change(self, value=None):
-        """Handle transparency change"""
-        self.update_live_preview()
     
     def on_custom_color_change(self, event=None):
         """Handle custom color change"""
@@ -667,7 +635,6 @@ class GiftCardGenerator(ctk.CTk):
         self.text_x.set("10")
         self.text_y.set("90")
         self.text_background_var.set("White Box")
-        self.text_transparency.set(50.0)
         self.text_alignment_var.set("Left")
         self.text_scale.set(100.0)
         
@@ -980,13 +947,6 @@ class GiftCardGenerator(ctk.CTk):
                 
                 if background_type == "White Box":
                     draw.rectangle([bg_x1, bg_y1, bg_x2, bg_y2], fill=(255, 255, 255, 255))
-                elif background_type == "Semi-transparent":
-                    # Create semi-transparent overlay
-                    overlay = Image.new('RGBA', image.size, (255, 255, 255, int(255 * (100 - self.text_transparency.get()) / 100)))
-                    mask = Image.new('RGBA', image.size, (0, 0, 0, 0))
-                    mask_draw = ImageDraw.Draw(mask)
-                    mask_draw.rectangle([bg_x1, bg_y1, bg_x2, bg_y2], fill=(255, 255, 255, 255))
-                    image.paste(overlay, (0, 0), mask)
                 elif background_type == "Custom Color":
                     try:
                         # Parse hex color
